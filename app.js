@@ -1,93 +1,87 @@
-/********************/
-/**** Squid Game ****/
-/**** Created by ****/
-/*** Jibran Abdul Jabbar ***/
-/**** 17/12/2021 ****/
-/********************/
-
-let pos = {x: 200, y: 480};
+let pos = { x: 650, y: 480 };
 let started = false;
 let pressed = false;
 let paused = false;
 let gover = false;
 let gwin = false;
-let time = 10000;
+let time = 13000;
 let gtime = 0;
 let cbtn = false;
 let explosion;
 let btn, lbtn, rbtn, ubtn, dbtn;
-let lprsd = false, 
-    rprsd = false, 
-    uprsd = false, 
-    dprsd = false;
+let lprsd = false, rprsd = false, uprsd = false, dprsd = false;
 
 function setup() {
-      createCanvas(400, 500)
-      gtime = random(1000, 2000);
+    createCanvas(1380, 640);
+    gtime = random(1000, 2000);
 
     btn = createButton('Start Game');
-    btn.position(290, 15);
+    btn.position(1000, 15);
     btn.size(100, 30);
+    btn.mousePressed(startGame);
 
     lbtn = createButton('◄');
-    lbtn.position(12, 460);
+    lbtn.position(1002, 460);
     lbtn.size(30, 30);
 
     rbtn = createButton('►');
-    rbtn.position(82, 460);
+    rbtn.position(1072, 460);
     rbtn.size(30, 30);
 
     ubtn = createButton('▲');
-    ubtn.position(47, 425);
+    ubtn.position(1037, 425);
     ubtn.size(30, 30);
 
     dbtn = createButton('▼');
-    dbtn.position(47, 460);
+    dbtn.position(1037, 460);
     dbtn.size(30, 30);
 
     explosion = new ExplosionSystem();
 }
 
+function keyPressed(event) {
+    event.preventDefault();
+    if (keyCode === 32) { // Space bar key code
+        restart();
+    }
+}
+
 function draw() {
     background("lightblue");
-    btn.mousePressed(restart);
 
     stroke(100);
     strokeWeight(1);
-    line(0, 70, 400, 70);
-    line(0, 460, 400, 460);
+    line(0, 70, 4000, 70);
+    line(0, 460, 4000, 460);
 
     fill("skyblue");
-    rect(8, 422, 108, 78, 10);
+    rect(997, 422, 108, 78, 10);
 
     fill("#f13345");
-    
-    ellipse(200, 35, 45, 60);
+    ellipse(650, 35, 45, 60);
     fill(200);
     stroke(0);
     strokeWeight(3);
-    ellipse(190, 28, 10, 8);
-    ellipse(210, 28, 10, 8);
-    ellipse(200, 50, 15, 6);
+    ellipse(660, 28, 10, 8);
+    ellipse(640, 28, 10, 8);
+    ellipse(650, 50, 15, 6);
     fill(0);
     stroke(100);
     strokeWeight(0);
-    triangle(200, 30, 195, 41, 205, 41);
+    triangle(650, 34, 640, 41, 658, 41);
 
-    if(paused) {
+    if (paused) {
         fill("#f13345");
-        ellipse(200, 35, 45, 60);
+        ellipse(650, 35, 45, 60);
     }
 
-    
     fill(0);
     textSize(20);
     strokeWeight(1);
-    text((time/1000).toFixed(2)+"s", 20, 40)
+    text((time / 1000).toFixed(2) + "s", 20, 40);
 
     if (started) {
         if (!gover && !gwin) {
-
             btnctrl();
 
             if ((keyIsDown(LEFT_ARROW) || lprsd) && pos.x > 20) {
@@ -105,27 +99,27 @@ function draw() {
             if ((keyIsDown(DOWN_ARROW) || dprsd) && pos.y < 480) {
                 pos.y += 2;
             }
-        
+
             if ((keyIsPressed && (
-                keyCode === UP_ARROW || 
-                keyCode === DOWN_ARROW || 
-                keyCode === LEFT_ARROW || 
+                keyCode === UP_ARROW ||
+                keyCode === DOWN_ARROW ||
+                keyCode === LEFT_ARROW ||
                 keyCode === RIGHT_ARROW
-            )) || 
-            (lprsd || rprsd || uprsd || dprsd)) {
-                pressed = true
+            )) ||
+                (lprsd || rprsd || uprsd || dprsd)) {
+                pressed = true;
             } else {
-                pressed = false
+                pressed = false;
             }
 
-            if(gtime >= 20) {
+            if (gtime >= 20) {
                 gtime -= 20;
-            }else{
-                gtime = random(1000, 2000);
-                if(paused) {
+            } else {
+                gtime = random(1000, 1500);
+                if (paused) {
                     paused = false;
                 } else {
-                    paused = true
+                    paused = true;
                 }
             }
 
@@ -134,7 +128,7 @@ function draw() {
             }
 
             if (paused) {
-                if(time >= 20) {
+                if (time >= 20) {
                     time -= 20;
                 } else {
                     gover = true;
@@ -143,19 +137,22 @@ function draw() {
 
             if (pos.y <= 90) {
                 gwin = true;
+                startConfetti();
             }
         } else if (gover) {
             fill("red");
             textSize(18);
-            text("ELEMINITED", 150, 200);
+            text("ELIMINATED", 600, 200);
+            stopConfetti();
         } else if (gwin) {
             fill("green");
             textSize(18);
-            text("YOU WIN", 160, 200);
+            text("YOU WIN", 600, 200);
+            startConfetti();
         }
-        if(!cbtn) {
+        if (!cbtn) {
             cbtn = true;
-            btn.html("Restart Game")
+            btn.html("Restart Game");
         }
     }
 
@@ -163,24 +160,30 @@ function draw() {
         explode();
     } else {
         fill("#fe9a2e");
-        ellipse(pos.x, pos.y, 40, 40); 
+        ellipse(pos.x, pos.y, 40, 40);
     }
 }
 
 function restart() {
-    pos = {x: 200, y: 480};
+    pos = { x: 650, y: 480 };
     started = true;
     pressed = false;
     paused = false;
     gover = false;
     gwin = false;
-    time = 10000;
+    time = 13000;
     gtime = 0;
     explosion = new ExplosionSystem();
     lprsd = false;
     rprsd = false;
     uprsd = false;
     dprsd = false;
+    stopConfetti();
+}
+
+function startGame() {
+    started = true;
+    restart();
 }
 
 function explode() {
@@ -189,103 +192,111 @@ function explode() {
 }
 
 function btnctrl() {
-    lbtn.touchStarted(()=> {
+    lbtn.touchStarted(() => {
         lprsd = true;
     });
 
-    rbtn.touchStarted(()=> {
+    rbtn.touchStarted(() => {
         rprsd = true;
     });
 
-    ubtn.touchStarted(()=> {
+    ubtn.touchStarted(() => {
         uprsd = true;
     });
 
-    dbtn.touchStarted(()=> {
+    dbtn.touchStarted(() => {
         dprsd = true;
     });
 
-    lbtn.touchEnded(()=> {
+    lbtn.touchEnded(() => {
         lprsd = false;
     });
 
-    rbtn.touchEnded(()=> {
+    rbtn.touchEnded(() => {
         rprsd = false;
     });
 
-    ubtn.touchEnded(()=> {
+    ubtn.touchEnded(() => {
         uprsd = false;
     });
 
-    dbtn.touchEnded(()=> {
+    dbtn.touchEnded(() => {
         dprsd = false;
     });
 }
 
-let ExplosionParticle = function(position, size) {
-  this.angle = random(0, 360);
-  this.rsize = size;
-  this.pos = position.copy();
-  this.acc = random(3, 4);
-  this.size = random(this.rsize/2.5,this.rsize/1.5);
-  this.dist = random(0, 8);
+let ExplosionParticle = function (position, size) {
+    this.angle = random(0, 360);
+    this.rsize = size;
+    this.pos = position.copy();
+    this.acc = random(3, 4);
+    this.size = random(this.rsize / 2.5, this.rsize / 1.5);
+    this.dist = random(0, 8);
 
-  this.cx = cos(this.angle)* this.dist+this.pos.x;
-  this.cy = sin(this.angle)* this.dist+this.pos.y;
-  this.pos = createVector(this.cx, this.cy);
-  this.pos.add(createVector(random(-(this.rsize/10),(this.rsize/10)),random(-(this.rsize/10), (this.rsize/10))));
+    this.cx = cos(this.angle) * this.dist + this.pos.x;
+    this.cy = sin(this.angle) * this.dist + this.pos.y;
+    this.pos = createVector(this.cx, this.cy);
+    this.pos.add(createVector(random(-(this.rsize / 10), (this.rsize / 10)), random(-(this.rsize / 10), (this.rsize / 10))));
 };
 
-ExplosionParticle.prototype.run = function() {
-  this.update();
-  this.display();
+ExplosionParticle.prototype.run = function () {
+    this.update();
+    this.display();
 };
 
-ExplosionParticle.prototype.update = function() {
-  let cx = cos(this.angle)* this.acc;
-  let cy = sin(this.angle)* this.acc;
-  let acc = createVector(cx, cy);
-  this.pos.add(acc);
-  this.size -= 1;
+ExplosionParticle.prototype.update = function () {
+    this.size -= this.acc;
 };
 
-ExplosionParticle.prototype.display = function() {
-  imageMode(CENTER);
-  fill("black");
-  strokeWeight(0);
-  ellipse(this.pos.x, this.pos.y, this.size, this.size);
-//   image(flame_image, this.pos.x, this.pos.y, this.size, this.size);
+ExplosionParticle.prototype.display = function () {
+    noStroke();
+    fill(random(255), random(255), random(255), random(150, 255));
+    ellipse(this.pos.x, this.pos.y, this.size, this.size);
 };
 
-ExplosionParticle.prototype.isDead = function() {
-  return this.size < 0;
+ExplosionParticle.prototype.isDead = function () {
+    return this.size < 0;
 };
 
-
-let ExplosionSystem = function() {
-  this.size = 10;
-  this.origin = createVector();
-  this.canadd = true;
-  this.particles = [];
+let ExplosionSystem = function () {
+    this.size = 10;
+    this.origin = createVector();
+    this.canadd = true;
+    this.particles = [];
 };
 
-ExplosionSystem.prototype.addParticle = function(origin, size) {
-  this.size = size;
-  this.origin = origin.copy();
-  if(this.canadd==true){
-    for (var i = 0; i <= 50; i++) {
-      this.particles.push(new ExplosionParticle(this.origin, this.size));
-      if (i==50) {this.canadd=false};
+ExplosionSystem.prototype.addParticle = function (origin, size) {
+    this.size = size;
+    this.origin = origin.copy();
+    if (this.canadd == true) {
+        for (var i = 0; i <= 50; i++) {
+            this.particles.push(new ExplosionParticle(this.origin, this.size));
+            if (i == 50) {
+                this.canadd = false;
+            }
+        }
     }
-  }
 };
 
-ExplosionSystem.prototype.run = function() {
-  for (let i = this.particles.length-1; i >= 0; i--) {
-    let p = this.particles[i];
-    p.run();
-    if (p.isDead()) {
-      this.particles.splice(i, 1);
+ExplosionSystem.prototype.run = function () {
+    for (let i = this.particles.length - 1; i >= 0; i--) {
+        let p = this.particles[i];
+        p.run();
+        if (p.isDead()) {
+            this.particles.splice(i, 1);
+        }
     }
-  }
+};
+
+let confetti;
+
+function startConfetti() {
+    confetti = new ConfettiGenerator({ target: 'confetti-canvas' });
+    confetti.render();
+}
+
+function stopConfetti() {
+    if (confetti) {
+        confetti.clear();
+    }
 }
